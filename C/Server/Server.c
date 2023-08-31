@@ -7,6 +7,9 @@
 #include <sys/types.h>
 #include <unistd.h> // read(), write(), close()
 #include "Server.h"
+#include <math.h>
+#include <time.h>
+#include <stdio.h>
 #define MAX 4096
 #define SA struct sockaddr
 
@@ -57,7 +60,7 @@ void func(int connfd, char* dirCol, char* dirHis, char* dir_logs)
                 printf("Server disconnects connection...\n");
                 break;
             }
-            if (strncmp("hist", buff, 4) == 0) {
+            else if (strncmp("hist", buff, 4) == 0) {
                 printf("Selecting histogram\n");
                 FILE *fptr;
                 fptr = fopen(dir_logs, "a");   
@@ -65,7 +68,7 @@ void func(int connfd, char* dirCol, char* dirHis, char* dir_logs)
                 fclose(fptr);
                 select = 1;
             }
-            if (strncmp("cols", buff, 4) == 0) {
+            else if (strncmp("cols", buff, 4) == 0) {
                 printf("Selecting cols\n");
                 FILE *fptr;
                 fptr = fopen(dir_logs, "a");
@@ -103,6 +106,10 @@ void func(int connfd, char* dirCol, char* dirHis, char* dir_logs)
                         fwrite(buff,65,1,fptr);
                         fclose(fptr);
                         FILE *fp;
+
+                        bzero(buff, MAX);
+                        strcpy(buff, dirCol);
+                        strcat(buff, imageName);
                         fp = fopen(buff, "w");
                         int file_count = 0;
                         while (FileBytesRcvd > 0)
@@ -121,6 +128,7 @@ void func(int connfd, char* dirCol, char* dirHis, char* dir_logs)
                             }
                         }
                         fclose(fp);
+                        msg_count = 0;
                     }
                 }
                 else{
@@ -151,6 +159,10 @@ void func(int connfd, char* dirCol, char* dirHis, char* dir_logs)
                         strcat(buff, "\n                                           ");
                         fwrite(buff,65,1,fptr);
                         fclose(fptr);
+
+                        bzero(buff, MAX);
+                        strcpy(buff, dirHis);
+                        strcat(buff, imageName);
                         FILE *fp;
                         fp = fopen(buff, "w");
                         int file_count = 0;
@@ -170,11 +182,19 @@ void func(int connfd, char* dirCol, char* dirHis, char* dir_logs)
                             }
                         }
                         fclose(fp);
-                    }
-                    
-                    // LOGICA DEL HISTOGRAMA
-                    
+                        msg_count = 0;
+                        // LOGICA DEL HISTOGRAMA
+                        char output_pth[MAX];
+                        bzero(output_pth, MAX);
+                        strcpy(output_pth, dirHis);
+                        strcat(output_pth, "/res");
+                        strcat(output_pth, imageName);
 
+                        bzero(buff, MAX);
+                        strcpy(buff, dirHis);
+                        strcat(buff, imageName);
+                        hist_equa(buff,imageName,output_pth);
+                    }
                 }
             }
         }
@@ -246,7 +266,7 @@ int main()
     // Read config
     FILE *fptr;
     // Open a file in read mode
-    fptr = fopen("/home/domtaxx/Documents/Git/Tarea_2_Operativos/C/Server/serer.conf", "r+");
+    fptr = fopen("/etc/server/config.conf", "r+");
     
     if (NULL == fptr) {
         perror("file can't be opened \n");
@@ -261,19 +281,19 @@ int main()
         char Data[MAX];
         get_sub_string(7,MAX,RawData, Data);
         if (strncmp("Puerto", config_buff, 6) == 0) {
-            printf("Puerto%s\n", Data);
+            printf("Puerto:%s\n", Data);
             port = atoi(Data);
         }
         else if (strncmp("DirCol", config_buff, 6) == 0) {
-            printf("DirCol%s\n", Data);
+            printf("DirCol:%s\n", Data);
             strncpy(dir_col,Data,MAX);
         }
         else if (strncmp("DirHis", config_buff, 6) == 0) {
-            printf("DirHis%s\n", Data);
+            printf("DirHis:%s\n", Data);
             strncpy(dir_his,Data,MAX);
         }
         else if (strncmp("DirLog", config_buff, 6) == 0) {
-            printf("DirLog%s\n", Data);
+            printf("DirLog:%s\n", Data);
             strncpy(dir_logs,Data,MAX);
         }
     }
@@ -314,11 +334,10 @@ int main()
             
             
             printf("Server listening..\n");
-            server_loop(sockfd,&dir_col,&dir_his, &dir_logs);
+            server_loop(sockfd,dir_col,dir_his, dir_logs);
         }
     }
    
     // After chatting close the socket
     close(sockfd);
 }
-

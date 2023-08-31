@@ -14,7 +14,7 @@ def socket_send_image(ip, port, image_name):
     # client_socket.sendall(f'/{image_name}\0'.encode())
 
     image_size = os.path.getsize(image_path)
-    client_socket.sendall(f'cols\0'.encode())
+    client_socket.sendall(f'hist\0'.encode())
     sleep(1)
     client_socket.sendall(f'/{image_name}\0'.encode())
     sleep(1)
