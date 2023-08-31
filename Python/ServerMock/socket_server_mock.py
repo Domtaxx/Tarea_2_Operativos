@@ -14,25 +14,27 @@ def main():
     # image_name = int.from_bytes(name_data, byteorder='big')
 
     # Recibiendo la longitud del archivo
-    size_data = client_socket.recv(8)
-    image_size = int.from_bytes(size_data, byteorder='little')
+    size_data = client_socket.recv(4)
+    image_size = int(size_data.decode())
+
+    client_socket.recv(1) #El servidor recibe el caracter de separación
 
     # Recibiendo la imagen en fragmentos y guardándola
     received_data = b''
     while len(received_data) < image_size:
-        data = client_socket.recv(1024)
+        data = client_socket.recv(4096)
         if not data:
             break
         received_data += data
 
     # Guardando la imagen recibida en el servidor
-    with open("received_image.jpg", "wb") as file:
+    with open("received_image.png", "wb") as file:
         file.write(received_data)
 
     print("Imagen recibida y guardada.")
 
     # Leyendo la imagen del servidor y enviándola de vuelta al cliente
-    with open("received_image.jpg", "rb") as file:
+    with open("received_image.png", "rb") as file:
         image_data = file.read()
 
     # Enviando la longitud de la imagen al cliente
