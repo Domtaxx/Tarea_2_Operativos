@@ -25,20 +25,4 @@ def socket_send_image(ip, port, image_name):
             client_socket.sendall(data)
 
     print("Imagen enviada al servidor.")
-
-    # Recibiendo la longitud de la imagen del servidor
-    image_size = int(client_socket.recv(1024).decode())
-
-    received_data = b""
-    # Recibiendo la imagen en fragmentos
-    while len(received_data) < image_size:
-        data = client_socket.recv(1024)
-        received_data += data
-
-    # Guardando la imagen recibida del servidor
-    with open("Python/Client/ImagesFromServer/received_image_from_server.png", "wb") as file:
-        file.write(received_data)
-
-    print("Imagen recibida del servidor y guardada.")
-
     client_socket.close()

@@ -32,22 +32,10 @@ def main():
         file.write(received_data)
 
     print("Imagen recibida y guardada.")
-
-    # Leyendo la imagen del servidor y enviándola de vuelta al cliente
-    with open("received_image.png", "rb") as file:
-        image_data = file.read()
-
-    # Enviando la longitud de la imagen al cliente
-    client_socket.send(str(len(image_data)).encode())
-
-    # Enviando la imagen al cliente en fragmentos
-    for i in range(0, len(image_data), 1024):
-        client_socket.send(image_data[i:i+1024])
-
-    print("Imagen enviada de vuelta al cliente.")
-
+    
     client_socket.close()
     server_socket.close()
 
 if __name__ == "__main__":
-    main()
+    while True:
+        main()
