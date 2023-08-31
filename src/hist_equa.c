@@ -9,9 +9,13 @@
 int height = 0;
 int width = 0;
 unsigned char** image;
-const char* filename_path = "../images/1.jpg"; // Ruta a tu imagen
-const char* img_extension = ".png";
-const char* output_path = "../output_image/";
+// const char* filename_path = "../images/1.jpg"; // Ruta a tu imagen
+char* file_path = NULL; // Ruta a tu imagen
+char* filename = NULL; // con extensión
+// const char* img_extension = ".png";
+// char* output_path = "../output_image/";
+char* output_path = NULL;
+
 
 unsigned char** crateArray(int height, int width) {
     unsigned char** array = (unsigned char**)malloc(height * sizeof(unsigned char*));
@@ -21,20 +25,20 @@ unsigned char** crateArray(int height, int width) {
     return array;
 }
 
-char* getCurrentTimeAndDay() {
-    time_t currentTime;
-    struct tm *localTime;
-    static char timeAndDay[100];  // Declaración estática para que persista después de que la función regrese
+// char* getCurrentTimeAndDay() {
+//     time_t currentTime;
+//     struct tm *localTime;
+//     static char timeAndDay[100];  // Declaración estática para que persista después de que la función regrese
 
-    // Obtiene la hora y fecha actual
-    currentTime = time(NULL);
-    localTime = localtime(&currentTime);
+//     // Obtiene la hora y fecha actual
+//     currentTime = time(NULL);
+//     localTime = localtime(&currentTime);
 
-    // Formatea la hora y fecha en la cadena
-    strftime(timeAndDay, sizeof(timeAndDay), "%Y-%m-%d %H:%M:%S %A", localTime);
+//     // Formatea la hora y fecha en la cadena
+//     strftime(timeAndDay, sizeof(timeAndDay), "%Y-%m-%d %H:%M:%S %A", localTime);
 
-    return timeAndDay;
-}
+//     return timeAndDay;
+// }
 
 unsigned char* convertToSingleArray(unsigned char** arrayOfPointers, size_t numRows, size_t numCols) {
     if (arrayOfPointers == NULL || numRows == 0 || numCols == 0) {
@@ -65,7 +69,7 @@ void getImage() {
      int channels;
 
     // Carga la imagen usando stb_image
-    unsigned char* image_data = stbi_load(filename_path, &width, &height, &channels, 0);
+    unsigned char* image_data = stbi_load(file_path, &width, &height, &channels, 0);
 
 
     if (!image_data) {
@@ -127,7 +131,11 @@ void equalizeHistogram(int histogram[], int width, int height) {
     }
 }
 
-int main() {
+int hist_equa(char* read_from_path, char* input_filename, char* write_to_path) {
+    file_path = read_from_path;
+    filename = input_filename;
+    output_path = write_to_path;
+
     // Supongamos que ya tienes la matriz de píxeles cargada en "image"
     getImage(image);
     int histogram[256] = {0}; // Inicializa el histograma con ceros
@@ -146,10 +154,8 @@ int main() {
     // Ahora "image" contiene la imagen con el histograma ecualizado
     unsigned char *singleArray = convertToSingleArray(image, height, width);
 
-    char currentTimeString[20];
-    strcpy(currentTimeString, getCurrentTimeAndDay());
     char imagePath[100];
-    snprintf(imagePath, sizeof(imagePath), "%s%s%s", output_path, currentTimeString, img_extension);
+    snprintf(imagePath, sizeof(imagePath), "%s%s", output_path, filename);
     // printf("Image will be saved at: %s\n", imagePath);
     stbi_write_png(imagePath, width, height, 1, singleArray, width);
 
