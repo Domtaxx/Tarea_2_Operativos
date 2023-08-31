@@ -8,39 +8,8 @@
 #include <unistd.h> // read(), write(), close()
 #define MAX 4096
 #define SA struct sockaddr
-   
-// Function designed for chat between client and server.
-void func(int connfd)
-{
-    char buff[MAX];
-    int n;
-    // infinite loop for chat
-    for (;;) {
-        bzero(buff, MAX);
-   
-        // read the message from client and copy it in buffer
-        read(connfd, buff, sizeof(buff));
-        // print buffer which contains the client contents
-        printf("From client: %s\t To client : ", buff);
-        bzero(buff, MAX);
-        n = 0;
-        // copy server message in the buffer
-        while ((buff[n++] = getchar()) != '\n');
-   
-        // and send that buffer to client
-        write(connfd, buff, sizeof(buff));
-   
-        // if msg contains "Exit" then server exit and chat ended.
-        if (strncmp("exit", buff, 4) == 0) {
-            printf("Server disconnects connection...\n");
-            break;
-        }
-        if (strncmp("func1", buff, 5) == 0) {
-            printf("functionality 1");
-            break;
-        }
-    }
-}
+
+
 int read_until_end_line(char* buff, char* res, int max_len){
     int len = 0;
     memset(res, '\0', max_len);
@@ -55,6 +24,118 @@ int read_until_end_line(char* buff, char* res, int max_len){
     }
     return len; 
 };
+// Function designed for chat between client and server.
+void func(int connfd, char* dirCol, char* dirHis, char* dir_logs)
+{
+    char buff[MAX];
+    int msg_count = 0;
+    int expected_chunks = 0;
+    int image_size = 0;
+    char imageName[MAX];
+    char buff_data[MAX];
+    
+    
+
+
+    int select = 0;
+    // infinite loop for chat
+    for (;;) {
+        
+        bzero(buff, MAX);
+        bzero(buff_data, MAX);
+        // read the message from client and copy it in buffer
+        ssize_t numBytesRcvd = recv(connfd, buff, MAX, 0);
+        // print buffer which contains the client contents
+   
+        //and send that buffer to client
+        //write(connfd, buff, sizeof(buff));
+        if (numBytesRcvd > 0){
+            printf("From client: %s\t", buff);
+            // if msg contains "Exit" then server exit and chat ended.
+            if (strncmp("exit", buff, 4) == 0) {
+                printf("Server disconnects connection...\n");
+                break;
+            }
+            if (strncmp("hist", buff, 4) == 0) {
+                printf("Selecting histogram\n");
+                FILE *fptr;
+                fptr = fopen(dir_logs, "a");   
+                fwrite("Client has selected histogram\n",MAX,1,fptr);
+                fclose(fptr);
+                select = 1;
+                break;
+            }
+            if (strncmp("cols", buff, 4) == 0) {
+                printf("Selecting cols\n");
+                FILE *fptr;
+                fptr = fopen(dir_logs, "a");
+                fwrite("Client has selected colors\n",MAX,1,fptr);
+                fclose(fptr);
+                select = 0;
+                break;
+            }
+            else{
+                if (select == 0){
+                    if(msg_count == 0){
+                        msg_count++;
+                        bzero(imageName, MAX);
+                        read_until_end_line(buff, imageName, MAX);
+                    }
+                    else if(msg_count > 0){
+                        msg_count++;
+                        read_until_end_line(buff, buff_data, MAX);
+                        image_size = atoi(buff_data);
+
+                        char image_buff[MAX]; 
+                        bzero(image_buff, MAX);
+                        ssize_t FileBytesRcvd = 1;
+                        
+                        FILE *fptr;
+                        fptr = fopen(dir_logs, "a");
+                        bzero(buff, MAX);
+                        strcat(buff, "\nImage location: ");
+                        fwrite(buff,17,1,fptr);
+                        fclose(fptr);
+                        fptr = fopen(dir_logs, "a");
+                        bzero(buff, MAX);
+                        strcpy(buff, dirCol);
+                        strcat(buff, imageName);
+                        fwrite(buff,64,1,fptr);
+                        fclose(fptr);
+                        FILE *fp;
+                        fp = fopen(buff, "w");
+                        int file_count = 0;
+                        while (FileBytesRcvd > 0)
+                        {
+                            bzero(image_buff, MAX);
+                            FileBytesRcvd = recv(connfd, image_buff, MAX, 0);
+                            if (strncmp("exit", image_buff, 4) == 0) {
+                                printf("Client Finished with image\n");
+                                break;
+                            }
+                            if(FileBytesRcvd > 0 ){
+                                if (file_count < image_size){
+                                    fwrite(image_buff,FileBytesRcvd,1,fp);
+                                    file_count = file_count + FileBytesRcvd;
+                                }
+                            }
+                        }
+                        fclose(fp);
+                    }
+                }
+                else{
+
+                }
+            }
+        }
+        /*
+        if (strncmp("func1", buff, 5) == 0) {
+            printf("functionality 1");
+            
+        }*/
+    }
+}
+
 
 // Function to get substr in C
 void get_sub_string(int pos, int len, char string[], char* substring)
@@ -63,11 +144,33 @@ void get_sub_string(int pos, int len, char string[], char* substring)
     strncpy(substring,string+(pos),len);
     return;
 }
-void server_loop(int sockfd){
+void server_loop(int sockfd, char* dirCol, char* dirHis, char* dir_logs){
     struct sockaddr_in cli;
     int len = sizeof(cli);
+    
     // Accept the data packet from client and verification
     int connfd = accept(sockfd, (SA*)&cli, &len);
+    struct sockaddr_in* pV4Addr = (struct sockaddr_in*)&cli;
+    struct in_addr ipAddr = pV4Addr->sin_addr;
+    char ip_add[MAX];
+    char str[INET_ADDRSTRLEN];
+    bzero(str, 16);
+    inet_ntop( AF_INET, &ipAddr, str, INET_ADDRSTRLEN );
+    bzero(ip_add, MAX);
+    strcat(ip_add,"Client IP: ");
+    strcat(ip_add, str);
+    strcat(ip_add," Port: ");
+    bzero(str, 16);
+    sprintf(str, "%d", cli.sin_port);
+    strcat(ip_add, str);
+    strcat(ip_add,"\n");
+    FILE *fptr;
+    fptr = fopen(dir_logs, "a+");
+    if (fptr == NULL){
+        fptr = fopen(dir_logs, "w");
+    }
+    fwrite(ip_add,32,1,fptr);
+    fclose(fptr);
     if (connfd < 0) {
         printf("server accept failed...\n");
         exit(0);
@@ -76,7 +179,7 @@ void server_loop(int sockfd){
         printf("server accept the client...\n");
    
     // Function for chatting between client and server
-    func(connfd);
+    func(connfd, dirCol, dirHis, dir_logs);
 
 };
 
@@ -150,15 +253,19 @@ int main()
         printf("Socket successfully binded..\n");
    
     // Now server is ready to listen and verification
-    if ((listen(sockfd, 5)) != 0) {
-        printf("Listen failed...\n");
-        exit(0);
-    }
-    else
-        printf("Server listening..\n");
+    
     
     for(;;){
-        server_loop(sockfd);
+        if ((listen(sockfd, 5)) != 0) {
+            printf("Listen failed...\n");
+            exit(0);
+        }   
+        else{
+            strcat(dir_logs, "/Activity.log");
+            
+            printf("Server listening..\n");
+            server_loop(sockfd,&dir_col,&dir_his, &dir_logs);
+        }
     }
    
     // After chatting close the socket
