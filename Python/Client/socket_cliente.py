@@ -3,7 +3,7 @@ import os
 
 def main():
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect(('127.0.0.1', 1717))
+    client_socket.connect(('127.0.0.1', 8888))
 
     image_path = "Images/"  # Cambia esto al camino de tu imagen
     image_name = "imagen.png"
@@ -11,9 +11,7 @@ def main():
 
     # # Enviar la longitud del archivo al servidor
     image_size = os.path.getsize(image_path)
-    print(type(image_size))
-    print(image_size)
-    client_socket.sendall(f'/{image_name}\0'.encode())
+    # client_socket.sendall(f'/{image_name}\0'.encode())
     client_socket.sendall(f'{image_size}\0'.encode())
     # # Enviar la imagen al servidor en fragmentos
     with open(image_path, 'rb') as f:
@@ -36,7 +34,7 @@ def main():
         received_data += data
 
     # Guardando la imagen recibida del servidor
-    with open("Client/received_image_from_server.jpg", "wb") as file:
+    with open("Python/Client/received_image_from_server.jpg", "wb") as file:
         file.write(received_data)
 
     print("Imagen recibida del servidor y guardada.")
