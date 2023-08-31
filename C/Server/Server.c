@@ -146,7 +146,7 @@ void func(int connfd, char* dirCol, char* dirHis, char* dir_logs)
                         fclose(fptr);
                         fptr = fopen(dir_logs, "a");
                         bzero(buff, MAX);
-                        strcpy(buff, dirCol);
+                        strcpy(buff, dirHis);
                         strcat(buff, imageName);
                         strcat(buff, "\n                                           ");
                         fwrite(buff,65,1,fptr);
@@ -219,7 +219,7 @@ void server_loop(int sockfd, char* dirCol, char* dirHis, char* dir_logs){
     if (fptr == NULL){
         fptr = fopen(dir_logs, "w");
     }
-    fwrite(ip_add,68,1,fptr);
+    fwrite(ip_add,70,1,fptr);
     fclose(fptr);
     if (connfd < 0) {
         printf("server accept failed...\n");
@@ -246,7 +246,7 @@ int main()
     // Read config
     FILE *fptr;
     // Open a file in read mode
-    fptr = fopen("/home/domtaxx/Documents/Git/Tarea_2_Operativos/Server/serer.conf", "r+");
+    fptr = fopen("/home/domtaxx/Documents/Git/Tarea_2_Operativos/C/Server/serer.conf", "r+");
     
     if (NULL == fptr) {
         perror("file can't be opened \n");
@@ -304,14 +304,14 @@ int main()
    
     // Now server is ready to listen and verification
     
-    
+    strcat(dir_logs, "/Activity.log");
     for(;;){
         if ((listen(sockfd, 5)) != 0) {
             printf("Listen failed...\n");
             exit(0);
         }   
         else{
-            strcat(dir_logs, "/Activity.log");
+            
             
             printf("Server listening..\n");
             server_loop(sockfd,&dir_col,&dir_his, &dir_logs);

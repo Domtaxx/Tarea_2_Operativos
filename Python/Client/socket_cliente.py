@@ -1,5 +1,6 @@
 import socket
 import os
+from time import sleep
 
 def socket_send_image(ip, port, image_name):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -13,16 +14,24 @@ def socket_send_image(ip, port, image_name):
     # client_socket.sendall(f'/{image_name}\0'.encode())
 
     image_size = os.path.getsize(image_path)
-    image_size = f'{image_size}\0'.encode()
-    client_socket.sendall(image_size)
+    client_socket.sendall(f'cols\0'.encode())
+    sleep(1)
+    client_socket.sendall(f'/{image_name}\0'.encode())
+    sleep(1)
+    client_socket.sendall(f'{image_size}\0'.encode())
+    sleep(1)
     # # Enviar la imagen al servidor en fragmentos
     with open(image_path, 'rb') as f:
         while True:
             data = f.read(4096)
             if not data:
-                # client_socket.sendall(f'exit\0'.encode())
+                client_socket.sendall(f'exit\0'.encode())
+                sleep(1)
                 break
             client_socket.sendall(data)
+            sleep(1)
 
     print("Imagen enviada al servidor.")
+    client_socket.sendall(f'exit\0'.encode())
+    sleep(1)
     client_socket.close()
