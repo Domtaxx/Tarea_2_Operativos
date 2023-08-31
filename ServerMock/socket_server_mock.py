@@ -10,17 +10,10 @@ def main():
     print("Conexión establecida desde:", client_address)
 
     # Recibiendo la longitud del archivo
-    # file_size = int(client_socket.recv(1024).decode())
-
     size_data = client_socket.recv(8)
     image_size = int.from_bytes(size_data, byteorder='big')
 
     # Recibiendo la imagen en fragmentos y guardándola
-    # received_data = b""
-    # while len(received_data) < file_size:
-    #     data = client_socket.recv(1024)
-    #     received_data += data
-
     received_data = b''
     while len(received_data) < image_size:
         data = client_socket.recv(1024)

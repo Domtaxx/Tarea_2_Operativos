@@ -1,11 +1,25 @@
 import tkinter as tk
 from tkinter import filedialog
 from PIL import Image, ImageTk
+import io
+
+def image_to_bytes(pil_image):
+    image_stream = io.BytesIO()
+    pil_image.save(image_stream, format='PNG')
+    image_bytes = image_stream.getvalue()
+    return image_bytes
+
+def set_new_image_name(image_path):
+    global new_image_name
+    new_image_name = image_path.split("/")[-1]
 
 def cargar_imagen():
     ruta_imagen = filedialog.askopenfilename()
     if ruta_imagen:
         imagen = Image.open(ruta_imagen)
+        # save image with original name
+        set_new_image_name(ruta_imagen)
+        imagen.save("Client/client_images/" + new_image_name)
         imagen = ImageTk.PhotoImage(imagen)
         lista_imagenes.append(imagen)
         ordenar_por_tamano()
@@ -41,16 +55,22 @@ def enviar_imagen():
     indice_seleccionado = lista_box.curselection()
     if indice_seleccionado:
         indice = int(indice_seleccionado[0])
-        imagen = lista_imagenes.pop(indice)
+        tk_imagen = lista_imagenes.pop(indice)
         actualizar_lista()
         label_imagen.config(image="")
+        img = ImageTk.getimage(tk_imagen)
+        print(type(img))
+        img_bytes = image_to_bytes(img)
+        print(len(img_bytes))
     mostrar_imagen_seleccionada(None)
-    mostrar_imagen_del_server(imagen)
+    mostrar_imagen_del_server(tk_imagen)
 
 def actualizar_lista():
     lista_box.delete(0, tk.END)
     for i, imagen in enumerate(lista_imagenes):
-        lista_box.insert(tk.END, f"Imagen {i+1} - {imagen.width()}x{imagen.height()}")
+        lista_box.insert(tk.END, f"{new_image_name}")
+
+new_image_name = ""
 
 # Crear ventana principal
 ventana = tk.Tk()
