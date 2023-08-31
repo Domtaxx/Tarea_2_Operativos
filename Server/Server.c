@@ -6,6 +6,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h> // read(), write(), close()
+#include "Server.h"
 #define MAX 4096
 #define SA struct sockaddr
 
@@ -60,19 +61,17 @@ void func(int connfd, char* dirCol, char* dirHis, char* dir_logs)
                 printf("Selecting histogram\n");
                 FILE *fptr;
                 fptr = fopen(dir_logs, "a");   
-                fwrite("Client has selected histogram\n",MAX,1,fptr);
+                fwrite("\nClient has selected histogram\n",31,1,fptr);
                 fclose(fptr);
                 select = 1;
-                break;
             }
             if (strncmp("cols", buff, 4) == 0) {
                 printf("Selecting cols\n");
                 FILE *fptr;
                 fptr = fopen(dir_logs, "a");
-                fwrite("Client has selected colors\n",MAX,1,fptr);
+                fwrite("\nClient has selected colors\n",28,1,fptr);
                 fclose(fptr);
                 select = 0;
-                break;
             }
             else{
                 if (select == 0){
@@ -93,14 +92,15 @@ void func(int connfd, char* dirCol, char* dirHis, char* dir_logs)
                         FILE *fptr;
                         fptr = fopen(dir_logs, "a");
                         bzero(buff, MAX);
-                        strcat(buff, "\nImage location: ");
-                        fwrite(buff,17,1,fptr);
+                        strcat(buff, "Image location: ");
+                        fwrite(buff,16,1,fptr);
                         fclose(fptr);
                         fptr = fopen(dir_logs, "a");
                         bzero(buff, MAX);
                         strcpy(buff, dirCol);
                         strcat(buff, imageName);
-                        fwrite(buff,64,1,fptr);
+                        strcat(buff, "\n                                           ");
+                        fwrite(buff,65,1,fptr);
                         fclose(fptr);
                         FILE *fp;
                         fp = fopen(buff, "w");
@@ -124,6 +124,56 @@ void func(int connfd, char* dirCol, char* dirHis, char* dir_logs)
                     }
                 }
                 else{
+                    if(msg_count == 0){
+                        msg_count++;
+                        bzero(imageName, MAX);
+                        read_until_end_line(buff, imageName, MAX);
+                    }
+                    else if(msg_count > 0){
+                        msg_count++;
+                        read_until_end_line(buff, buff_data, MAX);
+                        image_size = atoi(buff_data);
+
+                        char image_buff[MAX]; 
+                        bzero(image_buff, MAX);
+                        ssize_t FileBytesRcvd = 1;
+                        
+                        FILE *fptr;
+                        fptr = fopen(dir_logs, "a");
+                        bzero(buff, MAX);
+                        strcat(buff, "Image location: ");
+                        fwrite(buff,16,1,fptr);
+                        fclose(fptr);
+                        fptr = fopen(dir_logs, "a");
+                        bzero(buff, MAX);
+                        strcpy(buff, dirCol);
+                        strcat(buff, imageName);
+                        strcat(buff, "\n                                           ");
+                        fwrite(buff,65,1,fptr);
+                        fclose(fptr);
+                        FILE *fp;
+                        fp = fopen(buff, "w");
+                        int file_count = 0;
+                        while (FileBytesRcvd > 0)
+                        {
+                            bzero(image_buff, MAX);
+                            FileBytesRcvd = recv(connfd, image_buff, MAX, 0);
+                            if (strncmp("exit", image_buff, 4) == 0) {
+                                printf("Client Finished with image\n");
+                                break;
+                            }
+                            if(FileBytesRcvd > 0 ){
+                                if (file_count < image_size){
+                                    fwrite(image_buff,FileBytesRcvd,1,fp);
+                                    file_count = file_count + FileBytesRcvd;
+                                }
+                            }
+                        }
+                        fclose(fp);
+                    }
+                    
+                    // LOGICA DEL HISTOGRAMA
+                    
 
                 }
             }
@@ -157,7 +207,7 @@ void server_loop(int sockfd, char* dirCol, char* dirHis, char* dir_logs){
     bzero(str, 16);
     inet_ntop( AF_INET, &ipAddr, str, INET_ADDRSTRLEN );
     bzero(ip_add, MAX);
-    strcat(ip_add,"Client IP: ");
+    strcat(ip_add,"\n***********************************\nClient IP: ");
     strcat(ip_add, str);
     strcat(ip_add," Port: ");
     bzero(str, 16);
@@ -169,7 +219,7 @@ void server_loop(int sockfd, char* dirCol, char* dirHis, char* dir_logs){
     if (fptr == NULL){
         fptr = fopen(dir_logs, "w");
     }
-    fwrite(ip_add,32,1,fptr);
+    fwrite(ip_add,68,1,fptr);
     fclose(fptr);
     if (connfd < 0) {
         printf("server accept failed...\n");
