@@ -187,13 +187,16 @@ void func(int connfd, char* dirCol, char* dirHis, char* dir_logs)
                         char output_pth[MAX];
                         bzero(output_pth, MAX);
                         strcpy(output_pth, dirHis);
-                        strcat(output_pth, "/res");
-                        strcat(output_pth, imageName);
+                        strcat(output_pth, "/res/");
 
                         bzero(buff, MAX);
                         strcpy(buff, dirHis);
                         strcat(buff, imageName);
-                        hist_equa(buff,imageName,output_pth);
+
+                        char temp[MAX];
+                        get_sub_string(1,MAX-1, imageName, temp);
+
+                        hist_equa(buff,temp,output_pth);
                     }
                 }
             }
