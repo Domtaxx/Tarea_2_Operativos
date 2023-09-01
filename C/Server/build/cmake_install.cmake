@@ -1,4 +1,4 @@
-# Install script for directory: /home/yorbre/Documents/Tarea_2_Operativos/C/Server
+# Install script for directory: /home/domtaxx/Documents/Git/Tarea_2_Operativos/C/Server
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/yorbre/Documents/Tarea_2_Operativos/C/Server/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/domtaxx/Documents/Git/Tarea_2_Operativos/C/Server/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

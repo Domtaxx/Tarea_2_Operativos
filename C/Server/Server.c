@@ -129,6 +129,19 @@ void func(int connfd, char* dirCol, char* dirHis, char* dir_logs)
                         }
                         fclose(fp);
                         msg_count = 0;
+
+                        // LOGICA DEL HISTOGRAMA
+                        char output_pth[MAX];
+                        bzero(output_pth, MAX);
+                        strcpy(output_pth, dirCol);
+                        strcat(output_pth, "/");
+                        bzero(buff, MAX);
+                        strcpy(buff, dirCol);
+                        strcat(buff, imageName);
+
+                        char temp[MAX];
+                        get_sub_string(1,MAX-1, imageName, temp);
+                        clas_color(buff,temp,output_pth);
                     }
                 }
                 else{
