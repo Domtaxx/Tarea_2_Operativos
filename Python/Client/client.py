@@ -61,7 +61,8 @@ def actualizar_lista():
     for img_name in lista_imagenes:
         lista_box.insert(tk.END, f"{img_name}")
 
-path_to_images = "Python/Client/ClientImages/"
+# path_to_images = "Python/Client/ClientImages/"
+path_to_images = ""
 new_image_name = ""
 
 # Crear ventana principal
@@ -79,7 +80,7 @@ port_label = tk.Label(ventana, text="Port: ")
 port_label.grid(row=0, column=2)
 
 port_entry = tk.Entry(ventana)
-port_entry.insert(0, "8888")
+port_entry.insert(0, "1717")
 port_entry.grid(row=0, column=3)
 
 boton_cargar = tk.Button(ventana, text="Cargar Imagen", command=cargar_imagen)

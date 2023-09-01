@@ -25,21 +25,6 @@ unsigned char** crateArray(int height, int width) {
     return array;
 }
 
-// char* getCurrentTimeAndDay() {
-//     time_t currentTime;
-//     struct tm *localTime;
-//     static char timeAndDay[100];  // Declaración estática para que persista después de que la función regrese
-
-//     // Obtiene la hora y fecha actual
-//     currentTime = time(NULL);
-//     localTime = localtime(&currentTime);
-
-//     // Formatea la hora y fecha en la cadena
-//     strftime(timeAndDay, sizeof(timeAndDay), "%Y-%m-%d %H:%M:%S %A", localTime);
-
-//     return timeAndDay;
-// }
-
 unsigned char* convertToSingleArray(unsigned char** arrayOfPointers, size_t numRows, size_t numCols) {
     if (arrayOfPointers == NULL || numRows == 0 || numCols == 0) {
         return NULL;

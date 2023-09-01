@@ -1,3 +1,3 @@
-/home/domtaxx/Documents/Git/Tarea_2_Operativos/C/Server/build/CMakeFiles/myprogram.dir
-/home/domtaxx/Documents/Git/Tarea_2_Operativos/C/Server/build/CMakeFiles/edit_cache.dir
-/home/domtaxx/Documents/Git/Tarea_2_Operativos/C/Server/build/CMakeFiles/rebuild_cache.dir
+/home/yorbre/Documents/Tarea_2_Operativos/C/Server/build/CMakeFiles/myprogram.dir
+/home/yorbre/Documents/Tarea_2_Operativos/C/Server/build/CMakeFiles/edit_cache.dir
+/home/yorbre/Documents/Tarea_2_Operativos/C/Server/build/CMakeFiles/rebuild_cache.dir

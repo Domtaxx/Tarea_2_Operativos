@@ -8,8 +8,8 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/domtaxx/Documents/Git/Tarea_2_Operativos/C/Server/Server.c" "CMakeFiles/myprogram.dir/Server.c.o" "gcc" "CMakeFiles/myprogram.dir/Server.c.o.d"
-  "/home/domtaxx/Documents/Git/Tarea_2_Operativos/C/Server/hist_equa.c" "CMakeFiles/myprogram.dir/hist_equa.c.o" "gcc" "CMakeFiles/myprogram.dir/hist_equa.c.o.d"
+  "/home/yorbre/Documents/Tarea_2_Operativos/C/Server/Server.c" "CMakeFiles/myprogram.dir/Server.c.o" "gcc" "CMakeFiles/myprogram.dir/Server.c.o.d"
+  "/home/yorbre/Documents/Tarea_2_Operativos/C/Server/hist_equa.c" "CMakeFiles/myprogram.dir/hist_equa.c.o" "gcc" "CMakeFiles/myprogram.dir/hist_equa.c.o.d"
   )
 
 # Targets to which this target links.

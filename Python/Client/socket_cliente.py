@@ -7,7 +7,7 @@ def socket_send_image(ip, port, image_name):
     # client_socket.connect(('127.0.0.1', port))
     client_socket.connect((ip, port))
 
-    image_path = "Python/Client/ClientImages/" 
+    image_path = "" 
     image_path += image_name
 
     # # Enviar la longitud del archivo al servidor
