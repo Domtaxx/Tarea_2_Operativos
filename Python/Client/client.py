@@ -66,7 +66,7 @@ def enviar_imagen():
         image_label.config(image="")
         img = ImageTk.getimage(tk_imagen)
     mostrar_imagen_seleccionada(None)
-    socket_send_image(ip_entry.get(), int(port_entry.get()), new_image_name)
+    socket_send_image(ip_entry.get(), int(port_entry.get()), new_image_name, funcion)
 
 def actualizar_lista():
     lista_box.delete(0, tk.END)
@@ -87,7 +87,7 @@ ip_label.grid(row=0, column=0)
 
 
 ip_entry = tk.Entry(ventana)
-ip_entry.insert(0, "192.168.0.21")
+ip_entry.insert(0, "127.0.0.1")
 ip_entry.grid(row=0, column=1)
 
 port_label = tk.Label(ventana, text="Port: ")
