@@ -2,7 +2,7 @@ import socket
 import os
 from time import sleep
 
-def socket_send_image(ip, port, image_name):
+def socket_send_image(ip, port, image_name, funcion):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # client_socket.connect(('127.0.0.1', port))
     client_socket.connect((ip, port))
@@ -14,7 +14,8 @@ def socket_send_image(ip, port, image_name):
     # client_socket.sendall(f'/{image_name}\0'.encode())
 
     image_size = os.path.getsize(image_path)
-    client_socket.sendall(f'hist\0'.encode())
+    # client_socket.sendall(f'hist\0'.encode())
+    client_socket.sendall((funcion + "\0").encode())
     sleep(1)
     client_socket.sendall(f'/{image_name}\0'.encode())
     sleep(1)

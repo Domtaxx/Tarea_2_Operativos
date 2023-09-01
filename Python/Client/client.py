@@ -27,6 +27,18 @@ def obtenerIndiceImagenSeleccionada():
         indice = 0
     return indice
 
+def set_histo():
+    global funcion
+    funcion = "hist"
+    func_label.config(text="Modo: " + funcion)
+
+
+def set_color():
+    global funcion
+    funcion = "cols"
+    func_label.config(text="Modo: " + funcion)
+        
+
 def mostrar_imagen_seleccionada(event):
     indice = obtenerIndiceImagenSeleccionada()
     if indice < len(lista_imagenes):
@@ -64,6 +76,7 @@ def actualizar_lista():
 # path_to_images = "Python/Client/ClientImages/"
 path_to_images = ""
 new_image_name = ""
+funcion = "hist"
 
 # Crear ventana principal
 ventana = tk.Tk()
@@ -72,8 +85,9 @@ ventana.title("Cargar y Ordenar Imágenes")
 ip_label = tk.Label(ventana, text="IP: ")
 ip_label.grid(row=0, column=0)
 
+
 ip_entry = tk.Entry(ventana)
-ip_entry.insert(0, "127.0.0.1")
+ip_entry.insert(0, "192.168.0.21")
 ip_entry.grid(row=0, column=1)
 
 port_label = tk.Label(ventana, text="Port: ")
@@ -89,6 +103,15 @@ boton_cargar.grid(row = 1, column=0, pady=10)
 boton_enviar = tk.Button(ventana, text="Enviar Imagen", command=enviar_imagen)
 boton_enviar.grid(row = 2, column=0, padx=10, pady=10)
 
+boton_histo = tk.Button(ventana, text="Modo hist", command=set_histo)
+boton_histo.grid(row = 3, column=0, padx=10, pady=10)
+
+boton_color = tk.Button(ventana, text="Modo clas", command=set_color)
+boton_color.grid(row = 4, column=0, padx=10, pady=10)
+
+func_label = tk.Label(ventana, text= "Modo: " + funcion)
+func_label.grid(row=5, column=2)
+
 lista_box = tk.Listbox(ventana)
 lista_box.grid(row = 1, column=1, rowspan=2)
 
@@ -100,7 +123,7 @@ lista_imagenes = {}
 
 # Crear etiqueta para mostrar la imagen seleccionada
 image_label = tk.Label(ventana)
-image_label.grid(row=3, column=0, columnspan=4)
+image_label.grid(row=6, column=0, columnspan=4)
 
 # Iniciar bucle principal
 ventana.mainloop()
