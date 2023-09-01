@@ -90,7 +90,6 @@ CMakeFiles/myprogram.dir/Server.c.o: ../Server.c \
   /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
   /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
   ../Server.h \
-  ../hist_equa.h \
   /usr/include/math.h \
   /usr/include/x86_64-linux-gnu/bits/math-vector.h \
   /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
@@ -245,8 +244,6 @@ CMakeFiles/myprogram.dir/hist_equa.c.o: ../hist_equa.c \
 /usr/include/x86_64-linux-gnu/bits/waitflags.h:
 
 ../hist_equa.c:
-
-../hist_equa.h:
 
 /usr/include/stdlib.h:
 
